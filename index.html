@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--Style Sheet and fonts-->
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/8197eb53f0.js" crossorigin="anonymous"></script>
+  
+  <title>Poke-Dex</title>
+</head>
+<body>
+  <nav id="navBar">
+    <div class="nav-wrapper">
+      <div class="nav-brand">
+        <img src="./Assets/images/Pokemon.png" alt="surprised pikachu">
+      </div>
+      <div class="nav-bar-nav">
+        <ul class="nav-list">
+          <li id="fav" >Favorites</li>
+          <li id="home" >Home</li>
+          <li>
+            <form>
+              <select id="cards" name="cards">
+                <option value="">Sort</option>
+                <option value= "A-Z">A-Z</option>
+                <option value="Z-A">Z-A</option>
+                <option value="increasing">Increasing</option>
+                <option value="decreasing">Decreasing</option>
+              </select>
+            </form>
+          </li>
+          <li>
+            <form>
+              <div id="searchBar">
+                <input id="search" type="text" placeHolder="Search Pokemon..." name="Search">
+              </div>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <section id="pokeDexBody" >
+    <!--Section containing the pokemon display cards-->
+    <div id="pokeDexContainer"> </div>
+  </section>
+  <div class="button">Load More</div>
+  <section>
+    <!--section for favorites-->
+    <div id = "favorite" class="favorite-pokemon"></div>
+  </section>
+  <script src="index.js"></script>
+</body>
+</html>
