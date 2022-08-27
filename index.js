@@ -1,9 +1,11 @@
-var pokemonCount = 252; 
+var pokemonCount = 152; 
 var pokeDexContainer = document.getElementById('pokeDexContainer'); 
 var loadButton = document.querySelector('.button');
 var home = document.getElementById('home');
-var favPage = document.getElementById
-var favorites = []; 
+var fav = document.getElementById('fav');
+var favSection = document.getElementById('favoriteSection');
+var favModal = document.querySelector('.favorites-modal');
+var pokeName = []; 
 var pokeIndex = {};
 const color = {
   Normal :  'rgba(168, 167, 122, .7)',
@@ -25,6 +27,21 @@ const color = {
   Steel : 'rgba(183, 183, 206, .7)',
   Fairy : 'rgba(214, 133, 173, .7)',
 }
+
+//Creating the favorites section
+let favoritesModal = document.createElement('div')
+favoritesModal.classList.add('favorites-modal')
+favoritesModal.setAttribute('data-animation','zoomInOut')
+favoritesModal.innerHTML = `
+<div class="container-fluid">
+  <header class="modal-header">
+    <h3>Favorite Pokemon</h3>
+    <i class="fa-solid fa-times modal-close"></i> 
+  </header>
+  <div id="favoritesContainer" class="modal-body"></div>
+</div>
+`
+favSection.appendChild(favoritesModal)
 
 function getPokemon(count){
   let pokemon = fetch('https://pokeapi.co/api/v2/pokemon/'+ count.toString());
@@ -80,9 +97,6 @@ function getPokemon(count){
           pokemonNameWrapper.classList.add('pokemon-name-wrapper'); 
           pokemonNameWrapper.innerHTML = `
             <p id = 'nameOrder'> #${order} ${name} </p>
-            <div id = 'fav-icon' class = 'fav-ind'>
-              <img src = './Assets/images/pokeball.png' alt = 'pokeball image'>
-            </div>
           `
           cardFront.appendChild(pokemonNameWrapper);
 
@@ -115,7 +129,12 @@ function getPokemon(count){
           let cbHeader = document.createElement('div');
           cbHeader.classList.add('cb-header');
           cbHeader.innerHTML = `
-          <i class="fav-btn fa-regular fa-star"></i>
+          <div class="add">
+            <i class="fa-solid fa-plus"></i>
+          </div>
+          <div class="remove">
+            <i class="fa-solid fa-xmark"></i>
+          </div>
           `
           cardBack.appendChild(cbHeader);
 
@@ -161,71 +180,82 @@ function getPokemon(count){
           abilities.setAttribute('id', 'abilities');
           abilities.innerHTML = `
           <p id = 'ability'>Ability: ${pokeIndex[count].ability[0]}</p>
-          <div id = 'abilityExp'> <i class="fa-solid fa-question"></i> </div>
           `
           cardBack.appendChild(abilities);
 
-      //Adding favorite
+      //Adding to favorites page
+        for (let i = 0; i < document.querySelectorAll('.add').length; i++){
+          document.querySelectorAll('.add')[i].addEventListener('click', function(){
+            let favoritesContainer = document.getElementById('favoritesContainer')
+            let card = this.parentNode.parentNode.parentNode.parentNode
+            this.classList.add('active')
+            this.parentNode.childNodes[3].classList.add('active')
+            favoritesContainer.appendChild(card);
+          })
+        }
 
-      //Search bar
-      var pokemonData = '[data-item]';
-      var pokeDataItems = document.querySelectorAll(pokemonData);
-
-      const searchBox = document.querySelector('#search');
-
-      searchBox.addEventListener('keyup', (e) => {
-        const searchInput = e.target.value.trim();
-
-        pokeDataItems.forEach((card) => {
-          if (card.dataset.item.includes(searchInput)){
-            card.style.display = 'block'
-          }else{
-            card.style.display = 'none'
-          }
+      //removing from favorites page
+  
+        for (let i = 0; i < document.querySelectorAll('.remove').length; i++){
+          document.querySelectorAll('.remove')[i].addEventListener('click', function(){
+            let favCard = this.parentNode.parentNode.parentNode.parentNode
+            this.classList.remove('active')
+            this.parentNode.childNodes[1].classList.remove('active');
+            pokeDexContainer.appendChild(favCard);
+          })
+        } 
+        
+        //Search bar
+        var pokemonData = '[data-item]';
+        var pokeDataItems = document.querySelectorAll(pokemonData);
+    
+        const searchBox = document.querySelector('#search');
+    
+        searchBox.addEventListener('keyup', (e) => {
+          const searchInput = e.target.value.trim();
+    
+          pokeDataItems.forEach((card) => {
+            if (card.dataset.item.includes(searchInput)){
+              card.style.display = 'block'
+            }else{
+              card.style.display = 'none'
+            }
+          })
         })
-      })
+        
+      });
+    }
+    
 
-      //Adding favorites page;
-
-  });
-}
 //Nav buttons
+fav.addEventListener('click', function() {
+  favoritesModal.classList.add('is-visible');
+})
+
+var modalClose = document.querySelector('.modal-close');
+modalClose.addEventListener('click', function() {
+  favoritesModal.classList.remove('is-visible');
+})
+
 home.addEventListener('click', function(){
   window.location.reload();
 });
 
 //When loading window
-  window.onload = function() {
-    pokeDexContainer.classList.add('initial')
-    for(let count = 1; count < 10; count++){
-      getPokemon(count);
-    }
+window.onload = function() {
+  pokeDexContainer.classList.add('initial')
+  for(let count = 1; count < 10; count++){
+    getPokemon(count);
   }
-
-
+}
 
 loadButton.addEventListener('click', function(){
   pokeDexContainer.classList.remove('initial')
   for(let count = 10; count < pokemonCount; count++){
     getPokemon(count);
   }
-  loadButton.style.display = 'none'
+  loadButton.style.display = 'none'  
 })
-
-//Sticky navbar
-var navBar = document.getElementById('navBar')
-var sticky = navBar.offsetTop; 
-var infoContainer = document.getElementById('pokemonInfoCards');  
-
-function scroll() {
-  if (window.pageYOffset >= sticky) {
-    navBar.classList.add('sticky')
-  }else {
-    navBar.classList.remove('sticky');
-  }
-}
-
-window.onscroll = function() {scroll()}
 
 //conversion functions
 function Capitalize(pokemonArray){

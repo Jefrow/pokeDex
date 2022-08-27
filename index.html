@@ -22,11 +22,11 @@
       </div>
       <div class="nav-bar-nav">
         <ul class="nav-list">
-          <li id="fav" >Favorites</li>
-          <li id="home" >Home</li>
+          <li id="fav" data-open="fav">Favorites</li>
+          <li id="home" >Reset</li>
           <li>
             <form>
-              <select id="cards" name="cards">
+              <select id="select" name="select">
                 <option value="">Sort</option>
                 <option value= "A-Z">A-Z</option>
                 <option value="Z-A">Z-A</option>
@@ -51,10 +51,8 @@
     <div id="pokeDexContainer"> </div>
   </section>
   <div class="button">Load More</div>
-  <section>
-    <!--section for favorites-->
-    <div id = "favorite" class="favorite-pokemon"></div>
-  </section>
+  <!--section for favorites-->
+  <section id="favoriteSection"></section>
   <script src="index.js"></script>
 </body>
 </html>
