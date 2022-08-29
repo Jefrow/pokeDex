@@ -184,44 +184,44 @@ function getPokemon(count){
           cardBack.appendChild(abilities);
 
       //Adding to favorites page
-        for (let i = 0; i < document.querySelectorAll('.add').length; i++){
-          document.querySelectorAll('.add')[i].addEventListener('click', function(){
-            let favoritesContainer = document.getElementById('favoritesContainer')
-            let card = this.parentNode.parentNode.parentNode.parentNode
-            this.classList.add('active')
-            this.parentNode.childNodes[3].classList.add('active')
-            favoritesContainer.appendChild(card);
-          })
-        }
+      for (let i = 0; i < document.querySelectorAll('.add').length; i++){
+        document.querySelectorAll('.add')[i].addEventListener('click', function(){
+          let favoritesContainer = document.getElementById('favoritesContainer')
+          let card = this.parentNode.parentNode.parentNode.parentNode
+          this.classList.add('active')
+          this.parentNode.childNodes[3].classList.add('active')
+          favoritesContainer.appendChild(card);
+        })
+      }
 
       //removing from favorites page
   
-        for (let i = 0; i < document.querySelectorAll('.remove').length; i++){
-          document.querySelectorAll('.remove')[i].addEventListener('click', function(){
-            let favCard = this.parentNode.parentNode.parentNode.parentNode
-            this.classList.remove('active')
-            this.parentNode.childNodes[1].classList.remove('active');
-            pokeDexContainer.appendChild(favCard);
-          })
-        } 
-        
-        //Search bar
-        var pokemonData = '[data-item]';
-        var pokeDataItems = document.querySelectorAll(pokemonData);
-    
-        const searchBox = document.querySelector('#search');
-    
-        searchBox.addEventListener('keyup', (e) => {
-          const searchInput = e.target.value.trim();
-    
-          pokeDataItems.forEach((card) => {
-            if (card.dataset.item.includes(searchInput)){
-              card.style.display = 'block'
-            }else{
-              card.style.display = 'none'
-            }
-          })
+      for (let i = 0; i < document.querySelectorAll('.remove').length; i++){
+        document.querySelectorAll('.remove')[i].addEventListener('click', function(){
+          let favCard = this.parentNode.parentNode.parentNode.parentNode
+          this.classList.remove('active')
+          this.parentNode.childNodes[1].classList.remove('active');
+          pokeDexContainer.appendChild(favCard);
         })
+      } 
+        
+      //Search bar
+      var pokemonData = '[data-item]';
+      var pokeDataItems = document.querySelectorAll(pokemonData);
+  
+      const searchBox = document.querySelector('#search');
+  
+      searchBox.addEventListener('keyup', (e) => {
+        const searchInput = e.target.value.trim();
+  
+        pokeDataItems.forEach((card) => {
+          if (card.dataset.item.includes(searchInput)){
+            card.style.display = 'block'
+          }else{
+            card.style.display = 'none'
+          }
+        })
+      })
         
       });
     }
@@ -246,6 +246,7 @@ window.onload = function() {
   pokeDexContainer.classList.add('initial')
   for(let count = 1; count < 10; count++){
     getPokemon(count);
+    console.log(pokeIndex[count].name);
   }
 }
 
