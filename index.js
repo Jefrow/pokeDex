@@ -1,11 +1,10 @@
-var pokemonCount = 152; 
+var pokemonCount = 151; 
 var pokeDexContainer = document.getElementById('pokeDexContainer'); 
-var loadButton = document.querySelector('.button');
-var home = document.getElementById('home');
-var fav = document.getElementById('fav');
-var favSection = document.getElementById('favoriteSection');
-var favModal = document.querySelector('.favorites-modal');
-var pokeName = []; 
+var favoritesContainer = document.getElementById('favoritesContainer'); 
+var favSection = document.getElementById('favoriteSection'); 
+var sort = document.querySelector('#sortContainer');
+var sortFav = document.querySelector('#sortFav');
+var favoritesModal = document.querySelector('.favorites-modal');
 var pokeIndex = {};
 const color = {
   Normal :  'rgba(168, 167, 122, .7)',
@@ -28,21 +27,6 @@ const color = {
   Fairy : 'rgba(214, 133, 173, .7)',
 }
 
-//Creating the favorites section
-let favoritesModal = document.createElement('div')
-favoritesModal.classList.add('favorites-modal')
-favoritesModal.setAttribute('data-animation','zoomInOut')
-favoritesModal.innerHTML = `
-<div class="container-fluid">
-  <header class="modal-header">
-    <h3>Favorite Pokemon</h3>
-    <i class="fa-solid fa-times modal-close"></i> 
-  </header>
-  <div id="favoritesContainer" class="modal-body"></div>
-</div>
-`
-favSection.appendChild(favoritesModal)
-
 function getPokemon(count){
   let pokemon = fetch('https://pokeapi.co/api/v2/pokemon/'+ count.toString());
   let pokemonSpecies = fetch('https://pokeapi.co/api/v2/pokemon-species/' + count.toString()); 
@@ -64,13 +48,21 @@ function getPokemon(count){
           const pokeDesc = species.flavor_text_entries[9].flavor_text;
           var [hp, atk, def, spAtk, spDef, spd] = pokemon.stats; 
 
-          pokeIndex[count] = {'name': name, 'image': image, 'order': order, 'height': height, 'weight': weight, 'types': types, 'ability': ability, 'description': pokeDesc,'stats': pokemon.stats, 'hp': hp.base_stat, 'atk': atk.base_stat, 'def': def.base_stat, 'spAtk': spAtk.base_stat, 'spDef': spDef.base_stat, 'spd': spd.base_stat };
+          pokeIndex [count]= {'name': name, 'image': image, 'order': order, 'height': height, 'weight': weight, 'types': types, 'ability': ability, 'description': pokeDesc,'stats': pokemon.stats, 'hp': hp.base_stat, 'atk': atk.base_stat, 'def': def.base_stat, 'spAtk': spAtk.base_stat, 'spDef': spDef.base_stat, 'spd': spd.base_stat };
 
           //Card container
+          const attributes = {
+            'data-name': pokeIndex[count].name,
+            'data-order': pokeIndex[count].order,
+            'data-type1': pokeIndex[count].types[0],
+            'data-type2': pokeIndex[count].types[1],  
+          }; 
           let pokemonCardContainer = document.createElement('div');
           pokemonCardContainer.classList.add('pokemon-card-container');
-          pokemonCardContainer.setAttribute('data-item' , `${pokeIndex[count].order} ${pokeIndex[count].name} ${pokeIndex[count].types[0]} ${pokeIndex[count].types[1]}`)
           pokeDexContainer.appendChild(pokemonCardContainer);
+
+          setAttributes(pokemonCardContainer, attributes);
+
 
           //Front of the cards
           let cardInner = document.createElement('div');
@@ -96,7 +88,8 @@ function getPokemon(count){
           let pokemonNameWrapper = document.createElement('div');
           pokemonNameWrapper.classList.add('pokemon-name-wrapper'); 
           pokemonNameWrapper.innerHTML = `
-            <p id = 'nameOrder'> #${order} ${name} </p>
+            <p id = 'order'> #${order}</p>
+            <p id = 'name'> ${name}</p>
           `
           cardFront.appendChild(pokemonNameWrapper);
 
@@ -188,6 +181,8 @@ function getPokemon(count){
         document.querySelectorAll('.add')[i].addEventListener('click', function(){
           let favoritesContainer = document.getElementById('favoritesContainer')
           let card = this.parentNode.parentNode.parentNode.parentNode
+          card.classList.remove('pokemon-card-container')
+          card.classList.add('favorite')
           this.classList.add('active')
           this.parentNode.childNodes[3].classList.add('active')
           favoritesContainer.appendChild(card);
@@ -195,10 +190,11 @@ function getPokemon(count){
       }
 
       //removing from favorites page
-  
       for (let i = 0; i < document.querySelectorAll('.remove').length; i++){
         document.querySelectorAll('.remove')[i].addEventListener('click', function(){
           let favCard = this.parentNode.parentNode.parentNode.parentNode
+          favCard.classList.add('pokemon-card-container')
+          favCard.classList.remove('favorite')
           this.classList.remove('active')
           this.parentNode.childNodes[1].classList.remove('active');
           pokeDexContainer.appendChild(favCard);
@@ -206,25 +202,100 @@ function getPokemon(count){
       } 
         
       //Search bar
-      var pokemonData = '[data-item]';
-      var pokeDataItems = document.querySelectorAll(pokemonData);
+      var pokemonCard = '.card-front';
+      var cards = document.querySelectorAll(pokemonCard);
   
       const searchBox = document.querySelector('#search');
-  
+
       searchBox.addEventListener('keyup', (e) => {
-        const searchInput = e.target.value.trim();
-  
-        pokeDataItems.forEach((card) => {
-          if (card.dataset.item.includes(searchInput)){
-            card.style.display = 'block'
-          }else{
-            card.style.display = 'none'
-          }
-        })
+      const searchInput = e.target.value.toUpperCase().trim();
+
+      cards.forEach((card) => {
+        if(card.textContent.toUpperCase().includes(searchInput)){
+          card.parentNode.parentNode.style.display = 'block'
+        }else{
+          card.parentNode.parentNode.style.display = 'none'
+        }
+      })  
       })
-        
-      });
-    }
+
+      //Sort 
+      function sortUp(data, cardList, container,){
+        let sortArray = []; 
+        for(let i = 0; i < cardList.length; i++){
+          sortArray.push(cardList[i]); 
+        }
+        console.log(sortArray); 
+
+        let sortedCards = sortArray.sort(function(a,b) {
+          if(a.getAttribute(data) < b.getAttribute(data)){
+            return -1; 
+          }else{
+            return 1; 
+          }
+        });
+        sortedCards.forEach((card) => {
+          container.appendChild(card); 
+        }); 
+      }
+
+      function sortDown(data, cardList, container) {
+        let sortArray = []; 
+        for(let i = 0; i < cardList.length; i++){
+          sortArray.push(cardList[i]); 
+        }
+        console.log(sortArray);
+
+        let sortedCards = sortArray.sort(function(a,b) {
+          if(a.getAttribute(data) > b.getAttribute(data)){
+            return -1; 
+          }else{
+            return 1; 
+          }
+        }); 
+        sortedCards.forEach((card) => {
+          container.appendChild(card);
+        });
+      }
+      
+      sort.addEventListener('change', function() {
+        let field = this.value; 
+        let pokemonCards = document.querySelectorAll('.pokemon-card-container'); 
+        if(field === 'idUp'){
+          sortUp('data-order', pokemonCards, pokeDexContainer);
+          console.log(field); 
+        }else if(field === 'idDwn'){
+          sortDown('data-order', pokemonCards, pokeDexContainer);
+          console.log(field);
+        }else if(field === 'alphaUp'){
+          console.log(field);
+          sortUp('data-name', pokemonCards, pokeDexContainer)
+        }else if(field === 'alphaDown'){
+          sortDown('data-name', pokemonCards, pokeDexContainer); 
+          console.log(field);
+        }
+      })
+
+      sortFav.addEventListener('change', function() {
+        let field = this.value; 
+        let favoriteCards = document.querySelectorAll('.favorite'); 
+        if(field === 'favIdUp'){
+          sortUp('data-order', favoriteCards, favoritesContainer);
+          console.log(field);
+        }else if(field === 'favIdDwn'){
+          sortDown('data-order', favoriteCards, favoritesContainer);
+          console.log(field);
+        }else if(field === 'favAlphaUp'){
+          sortUp('data-name', favoriteCards, favoritesContainer);
+          console.log(field);
+        }else if(field === 'favAlphaDwn'){
+          sortDown('data-name', favoriteCards, favoritesContainer)
+          console.log(field);
+        }
+      })
+
+  });
+}
     
 
 //Nav buttons
@@ -244,19 +315,11 @@ home.addEventListener('click', function(){
 //When loading window
 window.onload = function() {
   pokeDexContainer.classList.add('initial')
-  for(let count = 1; count < 10; count++){
+  for(let count = 1; count <= pokemonCount; count++){
     getPokemon(count);
-    console.log(pokeIndex[count].name);
   }
 }
 
-loadButton.addEventListener('click', function(){
-  pokeDexContainer.classList.remove('initial')
-  for(let count = 10; count < pokemonCount; count++){
-    getPokemon(count);
-  }
-  loadButton.style.display = 'none'  
-})
 
 //conversion functions
 function Capitalize(pokemonArray){
@@ -270,4 +333,16 @@ function toFeet(height){
   let feet = Math.floor(inches/12); 
   inches %= 12; 
   return (`${feet}' ${inches}"`); 
+}
+
+function setAttributes(element, attributes) {
+  Object.keys(attributes).forEach(attr => {
+    element.setAttribute(attr, attributes[attr]);
+  }); 
+}
+
+function removeAttributes(element,attributes) {
+  attributes.forEach(attr => {
+    element.removeAttribute(attr); 
+  });
 }

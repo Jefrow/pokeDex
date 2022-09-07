@@ -25,15 +25,12 @@
           <li id="fav" data-open="fav">Favorites</li>
           <li id="home" >Reset</li>
           <li>
-            <form>
-              <select id="select" name="select">
-                <option value="">Sort</option>
-                <option value= "A-Z">A-Z</option>
-                <option value="Z-A">Z-A</option>
-                <option value="increasing">Increasing</option>
-                <option value="decreasing">Decreasing</option>
-              </select>
-            </form>
+            <select id="sortContainer">
+              <option value="idUp">ID UP</option>
+              <option value="idDwn">ID Down</option>
+              <option value="alphaUp">A-Z</option>
+              <option value="alphaDown">Z-A</option>
+            </select>
           </li>
           <li>
             <form>
@@ -48,11 +45,30 @@
   </nav>
   <section id="pokeDexBody" >
     <!--Section containing the pokemon display cards-->
-    <div id="pokeDexContainer"> </div>
+    <div id="pokeDexContainer"></div>
   </section>
-  <div class="button">Load More</div>
   <!--section for favorites-->
-  <section id="favoriteSection"></section>
+  <section id="favoriteSection">
+    <div class="favorites-modal" data-animation = "zoomInOut">
+      <div class="container-fluid">
+        <header class="modal-header">
+            <h3>Favorite Pokemon</h3>
+            <div class="sort-close-wrapper">
+              <div class="sort-wrapper">
+              <select id="sortFav">
+                <option value="favIdUp">ID Up</option>
+                <option value="favIdDwn">ID Down</option>
+                <option value="favAlphaUp">A-Z</option>
+                <option value="favAlphaDwn">Z-A</option>
+              </select>
+              </div>
+              <i class="fa-solid fa-times modal-close"></i>
+            </div>
+        </header>
+        <div id="favoritesContainer" class="modal-body"></div>
+      </div>
+    </div>
+  </section>
   <script src="index.js"></script>
 </body>
 </html>
